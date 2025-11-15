@@ -1,35 +1,44 @@
-const { SerialPort } = require("serialport");
 const express = require("express");
-const app = express();
+const SerialPortManager = require("./serialPort");
+const { getOtpNumber } = require("./utils");
 
+const app = express();
 const port = process.env.HTTP_PORT || 63791;
 const portPath = process.env.SERIAL_PORT_PATH || "/dev/tty.usbmodem22201";
 
-const sp = new SerialPort({
-  path: portPath,
-  baudRate: 38400,
-  autoOpen: true,
-});
+// 시리얼 포트 매니저 초기화 (연결은 요청 시에만 수행)
+const serialPortManager = new SerialPortManager(portPath, 38400);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.post("/otp-sms", (req, res) => {
+app.post("/otp-sms", async (req, res) => {
   if (req.body && req.body.body) {
     const otp = getOtpNumber(req.body.body);
-    otp &&
-      sp.write(`${otp}`, (err) => {
-        if (err) return console.log("Error on write:", err.message);
-      });
+
+    if (otp) {
+      try {
+        // 연결 -> 전송 -> 종료를 한 번에 수행
+        await serialPortManager.connectAndWrite(`${otp}`);
+        console.log(`OTP 전송 성공: ${otp}`);
+        res.status(200).json({ success: true, otp: otp });
+      } catch (err) {
+        console.log("시리얼 포트 오류:", err.message);
+        res.status(503).json({
+          error: "Serial port error",
+          message: err.message,
+        });
+      }
+    } else {
+      res
+        .status(200)
+        .json({ success: false, message: "OTP를 찾을 수 없습니다." });
+    }
+  } else {
+    res.status(400).json({ error: "Invalid request body" });
   }
-  res.status(200).send("ok");
 });
 
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
 });
-
-function getOtpNumber(smsBody) {
-  const otpMatch = smsBody.match(/\b\d{4,10}\b/);
-  return otpMatch ? otpMatch[0] : null;
-}
