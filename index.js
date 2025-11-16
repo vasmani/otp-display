@@ -6,15 +6,14 @@ const app = express();
 const port = process.env.HTTP_PORT || 63791;
 const portPath = process.env.SERIAL_PORT_PATH || "/dev/tty.usbmodem22201";
 
-// 시리얼 포트 매니저 초기화 (연결은 요청 시에만 수행)
 const serialPortManager = new SerialPortManager(portPath, 38400);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.post("/otp-sms", async (req, res) => {
-  if (req.body && req.body.body) {
-    const otp = getOtpNumber(req.body.body);
+app.post("/display", async (req, res) => {
+  if (req.body && req.body.number) {
+    const otp = getOtpNumber(req.body.number);
 
     if (otp) {
       try {
