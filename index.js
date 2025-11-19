@@ -39,13 +39,12 @@ async function subscribeToCollection() {
         return;
       }
       console.log("OTP 추출됨:", otp);
-
+      setTimeout(() => {
+        setClipboard(otp);
+      }, 3000);
       try {
         // 연결 -> 전송 -> 종료를 한 번에 수행
         await serialPortManager.connectAndWrite(`${otp}`);
-        setTimeout(() => {
-          setClipboard(otp);
-        }, 2000);
         console.log(`OTP 전송 성공: ${otp}`);
       } catch (err) {
         console.error("시리얼 포트 오류:", err.message);
