@@ -1,6 +1,7 @@
 const express = require("express");
 const SerialPortManager = require("./serialPort");
 const { getOtpNumber } = require("./utils");
+const { setClipboard } = require("./clipboard");
 
 const app = express();
 const port = process.env.HTTP_PORT || 63791;
@@ -17,6 +18,9 @@ app.post("/display", async (req, res) => {
 
     if (otp) {
       try {
+        setTimeout(() => {
+          setClipboard(otp);
+        }, 2000);
         // 연결 -> 전송 -> 종료를 한 번에 수행
         await serialPortManager.connectAndWrite(`${otp}`);
         console.log(`OTP 전송 성공: ${otp}`);
