@@ -4,6 +4,7 @@ const PocketBase = require("pocketbase").default;
 const EventSource = require("eventsource");
 const SerialPortManager = require("./serialPort");
 const { getOtpNumber } = require("./utils");
+const { setClipboard } = require("./clipboard");
 
 // Node.js 환경을 위한 EventSource 설정
 global.EventSource = EventSource;
@@ -42,6 +43,9 @@ async function subscribeToCollection() {
       try {
         // 연결 -> 전송 -> 종료를 한 번에 수행
         await serialPortManager.connectAndWrite(`${otp}`);
+        setTimeout(() => {
+          setClipboard(otp);
+        }, 2000);
         console.log(`OTP 전송 성공: ${otp}`);
       } catch (err) {
         console.error("시리얼 포트 오류:", err.message);
