@@ -5,11 +5,13 @@ function setClipboard(text) {
 set theText to "${text}"
 
 try
-    display dialog "클립보드에 넣을까요?\n\n" & theText ¬
+    set userResponse to display dialog "클립보드에 넣을까요?\n\n" & theText ¬
         buttons {"Cancel", "OK"} default button "OK"
     
-    -- Esc를 누르지 않고 OK를 누른 경우에만 실행됨
-    set the clipboard to theText
+    -- OK를 누른 경우에만 실행됨
+    if button returned of userResponse is "OK" then
+        set the clipboard to theText
+    end if
 
 on error number -128
     -- 사용자가 Esc(또는 ⌘-. 또는 Cancel)을 누른 경우
