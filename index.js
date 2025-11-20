@@ -5,6 +5,7 @@ const EventSource = require("eventsource");
 const SerialPortManager = require("./serialPort");
 const { getOtpNumber } = require("./utils");
 const { setClipboard } = require("./clipboard");
+const { typeOTP } = require("./keystroke");
 
 // Node.js 환경을 위한 EventSource 설정
 global.EventSource = EventSource;
@@ -40,7 +41,12 @@ async function subscribeToCollection() {
       }
       console.log("OTP 추출됨:", otp);
       setTimeout(() => {
-        setClipboard(otp);
+        if (process.env.COPY_TO_CLIPBOARD === "true") {
+          setClipboard(otp);
+        }
+        if (process.env.AUTO_TYPE === "true") {
+          typeOTP(otp);
+        }
       }, 3000);
       try {
         // 연결 -> 전송 -> 종료를 한 번에 수행
