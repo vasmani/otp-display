@@ -1,7 +1,10 @@
+require("dotenv").config({ path: ".env.local" });
+
 const express = require("express");
 const SerialPortManager = require("./serialPort");
 const { getOtpNumber } = require("./utils");
 const { setClipboard } = require("./clipboard");
+const { typeOTP } = require("./typeOtp");
 
 const app = express();
 const port = process.env.HTTP_PORT || 63791;
@@ -19,7 +22,8 @@ app.post("/display", async (req, res) => {
     if (otp) {
       try {
         setTimeout(() => {
-          setClipboard(otp);
+          if (process.env.COPY_TO_CLIPBOARD === "true") setClipboard(otp);
+          if (process.env.AUTO_TYPE === "true") typeOTP(otp);
         }, 1000);
         // 연결 -> 전송 -> 종료를 한 번에 수행
         await serialPortManager.connectAndWrite(`${otp}`);
