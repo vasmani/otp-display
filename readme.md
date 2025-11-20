@@ -11,8 +11,12 @@
 
 ### 환경변수
 
+`.env.local.example`을 `.env.local`로 복사하고, 내용을 수정한다.
+
 - HTTP_PORT = 63791
 - SERIAL_PORT_PATH = /dev/tty.usbmodem22201
+- COPY_TO_CLIPBOARD = false ## 클립보드에 복사할지 여부
+- AUTO_TYPE = true ## 자동으로 타이핑할지 여부
 
 ## test command
 
