@@ -16,6 +16,8 @@
 - `SERIAL_PORT_PATH` - 시리얼 포트 경로 (기본값: /dev/tty.usbmodem22201)
 - `POCKETBASE_URL` - PocketBase 서버 URL (필수)
 - `COLLECTION_NAME` - 구독할 컬렉션 이름 (필수)
+- `COPY_TO_CLIPBOARD` - 복붙 confirm창 띄우기 true/false
+- `AUTO_TYPE` - 자동으로 타이핑하기 true/false
 
 ## 설치 및 실행
 

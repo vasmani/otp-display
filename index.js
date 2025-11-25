@@ -3,7 +3,7 @@ require("dotenv").config({ path: ".env.local" });
 const PocketBase = require("pocketbase").default;
 const EventSource = require("eventsource");
 const SerialPortManager = require("./serialPort");
-const { getOtpNumber } = require("./utils");
+const { getOtpNumber, masking } = require("./utils");
 const { setClipboard } = require("./clipboard");
 const { typeOTP } = require("./keystroke");
 
@@ -19,8 +19,8 @@ const pb = new PocketBase(pocketbaseUrl);
 
 async function subscribeToCollection() {
   try {
-    console.log(`PocketBase 연결 중: ${pocketbaseUrl}`);
-    console.log(`컬렉션 구독 중: ${collectionName}`);
+    console.log(`PocketBase 연결 중: ${masking(pocketbaseUrl)}`);
+    console.log(`컬렉션 구독 중: ${masking(collectionName)}`);
 
     // 컬렉션 구독
     await pb.collection(collectionName).subscribe("*", async (e) => {
@@ -58,7 +58,7 @@ async function subscribeToCollection() {
     });
 
     console.log(
-      `구독 성공! ${collectionName} 컬렉션의 새 레코드를 감시합니다.`
+      `구독 성공! ${masking(collectionName)} 컬렉션의 새 레코드를 감시합니다.`
     );
   } catch (err) {
     console.error("PocketBase 구독 오류:", err.message);
@@ -70,8 +70,6 @@ async function subscribeToCollection() {
 // 프로그램 시작
 console.log("OTP Display 서비스 시작");
 console.log(`시리얼 포트: ${portPath}`);
-console.log(`PocketBase URL: ${pocketbaseUrl}`);
-console.log(`컬렉션: ${collectionName}`);
 subscribeToCollection();
 
 // 종료 처리
