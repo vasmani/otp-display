@@ -70,8 +70,19 @@ async function subscribeToCollection() {
 // 프로그램 시작
 console.log("OTP Display 서비스 시작");
 console.log(`시리얼 포트: ${portPath}`);
-console.log("Booting...");
-serialPortManager.connectAndWrite("88888888"); // 초기 테스트 번호 전송
+
+// 시리얼 포트 초기화 (실패해도 계속 진행)
+(async () => {
+  try {
+    console.log("시리얼 포트 초기화 중...");
+    await serialPortManager.connectAndWrite("88888888");
+    console.log("시리얼 포트 초기화 완료");
+  } catch (err) {
+    console.error("시리얼 포트 초기화 실패:", err.message);
+    console.log("시리얼 포트 없이 계속 실행합니다...");
+  }
+})();
+
 subscribeToCollection();
 
 // 종료 처리
