@@ -3,14 +3,15 @@ require("dotenv").config({ path: ".env.local" });
 const PocketBase = require("pocketbase").default;
 const EventSource = require("eventsource");
 const SerialPortManager = require("./serialPort");
-const { getOtpNumber, masking } = require("./utils");
+const { getOtpNumber, masking, detectUsbModemPath } = require("./utils");
 const { setClipboard } = require("./clipboard");
 const { typeOTP } = require("./keystroke");
 
 // Node.js 환경을 위한 EventSource 설정
 global.EventSource = EventSource;
 
-const portPath = process.env.SERIAL_PORT_PATH || "/dev/tty.usbmodem22201";
+const portPath = process.env.SERIAL_PORT_PATH || detectUsbModemPath();
+
 const pocketbaseUrl = process.env.POCKETBASE_URL;
 const collectionName = process.env.COLLECTION_NAME;
 
